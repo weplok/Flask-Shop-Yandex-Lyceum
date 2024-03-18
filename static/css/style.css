@@ -1,0 +1,41 @@
+h4 {
+    color: darkgray;
+    padding: 20px;
+}
+
+div.margin-50 {
+    margin-left: 50px;
+}
+
+table {
+    width: 1200px;
+    margin-left: 100px;
+    border-collapse: collapse;
+}
+
+th, td {
+    padding: 10px;
+    border: 1px solid black;
+    text-align: left;
+}
+
+th {
+    background-color: #f2f2f2;
+}
+
+td {
+    background-color: #e1f5fe;
+}
+
+td.not-finished {
+    background-color: #ffb3b3;
+}
+
+td.finished {
+    background-color: #7dff93;
+}
+
+form {
+    margin-left: 40px;
+    width: 90%;
+}

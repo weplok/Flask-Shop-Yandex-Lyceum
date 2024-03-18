@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="d-flex justify-content-center mb-4">
+  <h2 class="col-md-5">Записи о выполняемых работах</h2>
+  <a href="/addjob">
+    <button class="btn btn-primary rounded-pill px-3" type="button">+</button>
+  </a>
+</div>
+{% for job in jobs%}
+<div class="col-md6 p-2 border-top rounded">
+  <h3 style="margin-left: 100px;">Запись № {{ loop.index }}</h3>
+  <table>
+    <tr>
+      <th style="width: 40%">Название выполняемой работы</th>
+      <th style="width: 20%">Ответственный</th>
+      <th style="width: 10%">Продолжительность, часов</th>
+      <th style="width: 20%">Работники в подчинении</th>
+      <th style="width: 10%">Завершена?</th>
+    </tr>
+    <tr>
+      <td>{{ job.job }}</td>
+      <td>{{ job.user.surname }} {{ job.user.name }}</td>
+      <td>{{ job.work_size }}</td>
+      <td>{{ job.collaborators }}</td>
+      {% if job.is_finished %}
+      <td class="finished">Да</td>
+      {% else %}
+      <td class="not-finished">Нет</td>
+      {% endif %}
+    </tr>
+  </table>
+  {% if current_user.is_authenticated and current_user == item.user %}
+    <div>
+        <a href="/news/{{ job.id }}" class="btn btn-warning">
+            Изменить
+        </a>
+        <a href="/news_delete/{{ job.id }}" class="btn btn-danger">
+            Удалить
+        </a>
+    </div>
+  {% endif %}
+
+</div>
+{% endfor %}
+{% endblock %}
