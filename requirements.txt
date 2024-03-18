@@ -1,0 +1,4 @@
+flask==3.0.2
+flask-login==0.6.3
+flask-wtf==1.2.1
+sqlalchemy==2.0.28
