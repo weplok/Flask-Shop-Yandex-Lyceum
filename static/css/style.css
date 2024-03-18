@@ -35,6 +35,11 @@ td.finished {
     background-color: #7dff93;
 }
 
+.table-bottom-btn {
+    margin-top: 15px;
+    margin-left: 100px;
+}
+
 form {
     margin-left: 40px;
     width: 90%;
