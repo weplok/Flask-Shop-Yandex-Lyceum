@@ -7,9 +7,14 @@ from data.jobs import Jobs
 from forms.user import LoginForm, RegisterForm
 from forms.jobs import AddJobForm, EditJobForm
 
+import os
+import dotenv
+
+dotenv.load_dotenv()
+
 
 app = Flask(import_name='localhost')
-app.config['SECRET_KEY'] = 'flask-1-v4305x5f16n0b457v2'
+app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', default='flask_secret_key')
 login_manager = LoginManager()
 login_manager.init_app(app)
 
