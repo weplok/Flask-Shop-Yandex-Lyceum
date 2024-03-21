@@ -132,5 +132,19 @@ def editjob(job_id, user_id):
     return render_template('editjob.html', form=form)
 
 
+@app.route('/deletejob/<int:job_id>/<int:user_id>', methods=['GET', 'POST'])
+@login_required
+def deletejob(job_id, user_id):
+    session = db_session.create_session()
+    job = session.query(Jobs).filter(Jobs.id == job_id).first()
+    if ((user_id == job.team_leader or user_id == 1)
+            and current_user.id == user_id):
+        session.delete(job)
+        session.commit()
+    else:
+        abort(404)
+    return redirect('/')
+
+
 if __name__ == '__main__':
     main()
