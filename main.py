@@ -1,4 +1,4 @@
-from flask import Flask, render_template, redirect
+from flask import Flask, abort, redirect, render_template, request
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 import data.db_session as db_session
 
@@ -103,26 +103,33 @@ def addjob():
 
 
 @app.route('/editjob/<int:job_id>/<int:user_id>', methods=['GET', 'POST'])
+@login_required
 def editjob(job_id, user_id):
-    session = db_session.create_session()
-    job = session.query(Jobs).filter(Jobs.id == job_id).first()
-    if ((user_id == job.team_leader or user_id == 1)
+    form = EditJobForm()
+    if request.method == "GET":
+        session = db_session.create_session()
+        job = session.query(Jobs).filter(Jobs.id == job_id).first()
+        if ((user_id == job.team_leader or user_id == 1)
             and current_user.id == user_id):
-        form = EditJobForm()
-        form.job.data = job.job
-        form.work_size.data = job.work_size
-        form.collaborators.data = job.collaborators
-        form.is_finished.data = job.is_finished
-        if form.validate_on_submit():
+            form.job.data = job.job
+            form.work_size.data = job.work_size
+            form.collaborators.data = job.collaborators
+            form.is_finished.data = job.is_finished
+        else:
+            abort(404)
+    if form.validate_on_submit():
+        session = db_session.create_session()
+        job = session.query(Jobs).filter(Jobs.id == job_id).first()
+        if job:
+            job.job = form.job.data
             job.work_size = form.work_size.data
-            session.query(Jobs).filter(Jobs.id == job_id).update({'job': form.job.data, 'work_size': job.work_size,
-                        'collaborators': form.collaborators.data, 'is_finished': form.is_finished.data})
+            job.collaborators = form.collaborators.data
+            job.is_finished = form.is_finished.data
             session.commit()
             return redirect('/')
-        return render_template('editjob.html', form=form)
-    else:
-        return f'{current_user.id} У вас нет доступа к редактированию этой работы!'
-
+        else:
+            abort(404)
+    return render_template('editjob.html', form=form)
 
 
 if __name__ == '__main__':
