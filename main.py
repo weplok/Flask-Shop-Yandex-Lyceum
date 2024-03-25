@@ -1,6 +1,7 @@
 from flask import Flask, abort, redirect, render_template, request
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 import data.db_session as db_session
+import data.jobs_api as jobs_api
 
 from data.users import User
 from data.jobs import Jobs
@@ -27,6 +28,7 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/mars_explorer.db")
+    app.register_blueprint(jobs_api.blueprint)
     app.run(port=8080)
 
 
