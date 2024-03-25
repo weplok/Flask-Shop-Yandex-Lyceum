@@ -1,5 +1,4 @@
 import flask
-import requests
 
 from . import db_session
 from .jobs import Jobs
@@ -57,6 +56,10 @@ def create_jobs():
     elif not all(key in flask.request.json for key in
                  ['team_leader', 'job', 'work_size', 'collaborators', 'is_finished']):
         return flask.make_response(flask.jsonify({'error': 'Bad request'}), 400)
+    elif (not isinstance(flask.request.json['team_leader'], int) or
+          not isinstance(flask.request.json['work_size'], int) or
+          not isinstance(flask.request.json['is_finished'], bool)):
+        return flask.make_response(flask.jsonify({'error': 'Bad params'}), 400)
     db_sess = db_session.create_session()
     jobs = Jobs(
         team_leader=flask.request.json['team_leader'],
