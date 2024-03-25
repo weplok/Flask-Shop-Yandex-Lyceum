@@ -14,7 +14,6 @@ import dotenv
 
 dotenv.load_dotenv()
 
-
 app = Flask(import_name='localhost')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', default='flask_secret_key')
 login_manager = LoginManager()
@@ -77,13 +76,13 @@ def reqister():
                                    form=form,
                                    message="Такой пользователь уже есть")
         user = User(
-            surname = form.surname.data.capitalize(),
-            name = form.name.data.capitalize(),
-            age = form.age.data,
-            position = form.position.data,
-            speciality = form.speciality.data,
-            address = form.address.data,
-            email = form.email.data,
+            surname=form.surname.data.capitalize(),
+            name=form.name.data.capitalize(),
+            age=form.age.data,
+            position=form.position.data,
+            speciality=form.speciality.data,
+            address=form.address.data,
+            email=form.email.data,
         )
         user.set_password(form.password.data)
         session.add(user)
@@ -99,11 +98,11 @@ def addjob():
     if form.validate_on_submit():
         session = db_session.create_session()
         job = Jobs(
-            team_leader = form.team_leader.data,
-            job = form.job.data,
-            work_size = form.work_size.data,
-            collaborators = form.collaborators.data,
-            is_finished = form.is_finished.data
+            team_leader=form.team_leader.data,
+            job=form.job.data,
+            work_size=form.work_size.data,
+            collaborators=form.collaborators.data,
+            is_finished=form.is_finished.data,
         )
         session.add(job)
         session.commit()
@@ -119,7 +118,7 @@ def editjob(job_id, user_id):
         session = db_session.create_session()
         job = session.query(Jobs).filter(Jobs.id == job_id).first()
         if ((user_id == job.team_leader or user_id == 1)
-            and current_user.id == user_id):
+                and current_user.id == user_id):
             form.job.data = job.job
             form.work_size.data = job.work_size
             form.collaborators.data = job.collaborators
