@@ -26,8 +26,8 @@ job_params = (
 @blueprint.route('/api/jobs', methods=['GET'])
 def get_jobs():
     global job_params
-    db_sess = db_session.create_session()
-    jobs = db_sess.query(Jobs).all()
+    session = db_session.create_session()
+    jobs = session.query(Jobs).all()
     return flask.jsonify(
         {
             'jobs':
@@ -38,8 +38,8 @@ def get_jobs():
 
 @blueprint.route('/api/jobs/<int:job_id>', methods=['GET'])
 def get_one_job(job_id):
-    db_sess = db_session.create_session()
-    job = db_sess.query(Jobs).get(job_id)
+    session = db_session.create_session()
+    job = session.query(Jobs).get(job_id)
     if not job:
         return flask.make_response(flask.jsonify({'error': 'Not found'}), 404)
     return flask.jsonify(
@@ -60,7 +60,7 @@ def create_jobs():
           not isinstance(flask.request.json['work_size'], int) or
           not isinstance(flask.request.json['is_finished'], bool)):
         return flask.make_response(flask.jsonify({'error': 'Bad params'}), 400)
-    db_sess = db_session.create_session()
+    session = db_session.create_session()
     jobs = Jobs(
         team_leader=int(flask.request.json['team_leader']),
         job=str(flask.request.json['job']),
@@ -68,6 +68,17 @@ def create_jobs():
         collaborators=str(flask.request.json['collaborators']),
         is_finished=bool(flask.request.json['is_finished']),
     )
-    db_sess.add(jobs)
-    db_sess.commit()
+    session.add(jobs)
+    session.commit()
     return flask.jsonify({'id': jobs.id})
+
+
+@blueprint.route('/api/jobs/<int:job_id>', methods=['DELETE'])
+def delete_jobs(job_id):
+    session = db_session.create_session()
+    job = session.query(Jobs).get(job_id)
+    if not job:
+        return flask.make_response(flask.jsonify({'error': 'Not found'}), 404)
+    session.delete(job)
+    session.commit()
+    return flask.jsonify({'success': 'OK'})
