@@ -5,7 +5,7 @@
 <form action="" method="post">
   {{ form.hidden_tag() }}
   <p>
-    {{ form.team_leader.label }}<br>
+    {{ form.team_leader.label }} {{'(Ваш id: ' ~ current_user.id ~ ')'}}<br>
     {{ form.team_leader(class="form-control", type="team_leader") }}<br>
     {% for error in form.team_leader.errors %}
   <div class="alert alert-danger" role="alert">
@@ -23,7 +23,7 @@
   {% endfor %}
   </p>
   <p>
-    {{ form.work_size.label }}<br>
+    {{ form.work_size.label }} <br>
     {{ form.work_size(class="form-control", type="work_size") }}<br>
     {% for error in form.work_size.errors %}
   <div class="alert alert-danger" role="alert">
