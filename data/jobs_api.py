@@ -82,3 +82,20 @@ def delete_jobs(job_id):
     session.delete(job)
     session.commit()
     return flask.jsonify({'success': 'OK'})
+
+
+@blueprint.route('/api/jobs/<int:job_id>', methods=['PUT'])
+def edit_jobs(job_id):
+    session = db_session.create_session()
+    job = session.query(Jobs).get(job_id)
+    if not job:
+        return flask.make_response(flask.jsonify({'error': 'Not found'}), 404)
+    try:
+        job.job = str(flask.request.json['job'])
+        job.work_size = int(flask.request.json['work_size'])
+        job.collaborators = str(flask.request.json['collaborators'])
+        job.is_finished = bool(flask.request.json['is_finished'])
+    except Exception as e:
+        return flask.make_response(flask.jsonify({'error': str(e)}), 400)
+    session.commit()
+    return flask.jsonify({'success': 'OK'})
