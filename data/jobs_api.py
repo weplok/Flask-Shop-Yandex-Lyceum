@@ -54,7 +54,7 @@ def create_jobs():
     if not flask.request.json:
         return flask.make_response(flask.jsonify({'error': 'Empty request'}), 400)
     elif not all(key in flask.request.json for key in
-                 ['team_leader', 'job', 'work_size', 'collaborators', 'is_finished']):
+                 ['team_leader', 'job', 'work_size', 'collaborators', 'is_finished']) or len(flask.request.json) != 5:
         return flask.make_response(flask.jsonify({'error': 'Bad request'}), 400)
     elif (not isinstance(flask.request.json['team_leader'], int) or
           not isinstance(flask.request.json['work_size'], int) or
@@ -62,11 +62,11 @@ def create_jobs():
         return flask.make_response(flask.jsonify({'error': 'Bad params'}), 400)
     db_sess = db_session.create_session()
     jobs = Jobs(
-        team_leader=flask.request.json['team_leader'],
-        job=flask.request.json['job'],
-        work_size=flask.request.json['work_size'],
-        collaborators=flask.request.json['collaborators'],
-        is_finished=flask.request.json['is_finished'],
+        team_leader=int(flask.request.json['team_leader']),
+        job=str(flask.request.json['job']),
+        work_size=int(flask.request.json['work_size']),
+        collaborators=str(flask.request.json['collaborators']),
+        is_finished=bool(flask.request.json['is_finished']),
     )
     db_sess.add(jobs)
     db_sess.commit()
