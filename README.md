@@ -1,6 +1,6 @@
 # Flask-Shop-Yandex-Lyceum
 
-It is my study project in Yandex Lyceym. Mars-mission web-site w/ Flask.
+It is my study project in Yandex Lyceym. Mars-mission web-site w/ Flask
 
 ## How run server
 
