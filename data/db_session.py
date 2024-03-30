@@ -18,7 +18,7 @@ def global_init(db_file):
     conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
     print(f"Подключение к базе данных по адресу {conn_str}")
 
-    engine = sqlalchemy.create_engine(conn_str, echo=True)
+    engine = sqlalchemy.create_engine(conn_str, echo=False)
     __factory = sqlalchemy.orm.sessionmaker(bind=engine)
 
     from . import __all_models

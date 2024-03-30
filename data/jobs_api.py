@@ -90,12 +90,15 @@ def edit_jobs(job_id):
     job = session.query(Jobs).get(job_id)
     if not job:
         return flask.make_response(flask.jsonify({'error': 'Not found'}), 404)
-    try:
+    if len(flask.request.json.keys()) == 0:
+        return flask.make_response(flask.jsonify({'error': 'No params'}), 400)
+    if 'job' in flask.request.json.keys():
         job.job = str(flask.request.json['job'])
+    if 'work_size' in flask.request.json.keys():
         job.work_size = int(flask.request.json['work_size'])
+    if 'collaborators' in flask.request.json.keys():
         job.collaborators = str(flask.request.json['collaborators'])
+    if 'is_finished' in flask.request.json.keys():
         job.is_finished = bool(flask.request.json['is_finished'])
-    except Exception as e:
-        return flask.make_response(flask.jsonify({'error': str(e)}), 400)
     session.commit()
     return flask.jsonify({'success': 'OK'})
