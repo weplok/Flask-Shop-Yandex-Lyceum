@@ -1,8 +1,5 @@
 from flask import Blueprint, make_response, jsonify
 
-from . import db_session
-from .jobs import Jobs
-
 blueprint = Blueprint(
     'errors_handler',
     __name__,

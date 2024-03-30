@@ -28,8 +28,8 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/mars_explorer.db")
-    app.register_blueprint(jobs_api.blueprint)
     app.register_blueprint(errors_handler.blueprint)
+    app.register_blueprint(jobs_api.blueprint)
     app.run(port=8080)
 
 
