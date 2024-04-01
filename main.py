@@ -84,6 +84,7 @@ def reqister():
             surname=form.surname.data.capitalize(),
             name=form.name.data.capitalize(),
             age=form.age.data,
+            city_from=form.city_from.data,
             position=form.position.data,
             speciality=form.speciality.data,
             address=form.address.data,
@@ -169,28 +170,23 @@ def users_show(user_id):
 
     search_api_server = "https://search-maps.yandex.ru/v1/"
     api_key = 'dda3ddba-c9ea-4ead-9010-f43fbc15c6e3'
-
     search_params = {
         "apikey": api_key,
         "text": user['city_from'],
         "lang": "ru_RU"
     }
-
     response = requests.get(search_api_server, params=search_params)
     if not response:
         return 'Город не найден :('
 
     # Преобразуем ответ в json-объект
     json_response = response.json()
-
     # Получаем первый найденный город.
     city = json_response["features"][0]
-
     # Получаем координаты ответа.
     point = city["geometry"]["coordinates"]
     org_point = "{0},{1}".format(point[0], point[1])
     delta = "0.05"
-
     # Собираем параметры для запроса к StaticMapsAPI:
     map_params = {
         # позиционируем карту центром на наш исходный адрес
@@ -203,7 +199,10 @@ def users_show(user_id):
     map_api_server = "http://static-maps.yandex.ru/1.x/"
     # ... и выполняем запрос
     response = requests.get(map_api_server, params=map_params)
-    return flask.render_template('users_show.html', name=user['name'], surname=user['surname'], city=user['city_from'],
+    return flask.render_template('users_show.html',
+                                 name=user['name'],
+                                 surname=user['surname'],
+                                 city=user['city_from'],
                                  img=response.url)
 
 
