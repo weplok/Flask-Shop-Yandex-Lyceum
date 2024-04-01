@@ -18,6 +18,7 @@ class User(SqlAlchemyBase, UserMixin, SerializerMixin):
     position = sqlalchemy.Column(sqlalchemy.String)
     speciality = sqlalchemy.Column(sqlalchemy.String)
     address = sqlalchemy.Column(sqlalchemy.String)
+    city_from = sqlalchemy.Column(sqlalchemy.String, default='Москва')
     jobs = orm.relationship("Jobs", back_populates='user')
     email = sqlalchemy.Column(sqlalchemy.String, unique=True)
     hashed_password = sqlalchemy.Column(sqlalchemy.String)

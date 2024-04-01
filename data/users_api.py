@@ -20,6 +20,7 @@ user_params = (
     'position',
     'speciality',
     'address',
+    'city_from',
     'email',
     'hashed_password',
     'modified_date',
@@ -110,6 +111,8 @@ def edit_user(user_id):
         user.speciality = str(flask.request.json['speciality'])
     if 'address' in flask.request.json.keys():
         user.address = str(flask.request.json['address'])
+    if 'city_from' in flask.request.json.keys():
+        user.city_from = str(flask.request.json['city_from'])
     if 'password' in flask.request.json.keys():
         user.hashed_password = generate_password_hash(str(flask.request.json['password']))
     user.modified_date = datetime.datetime.now
