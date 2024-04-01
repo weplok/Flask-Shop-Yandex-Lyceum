@@ -1,11 +1,14 @@
 import flask
 from flask import Flask, abort, redirect, render_template, request
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
+from flask_restful import Api
 import data.db_session as db_session
 
 import data.jobs_api as jobs_api
 import data.users_api as users_api
 import data.errors_handler as errors_handler
+
+import data.users_resources as users_resources
 
 from data.users import User
 from data.jobs import Jobs
@@ -20,6 +23,7 @@ dotenv.load_dotenv()
 
 app = Flask(import_name='localhost')
 app.config['SECRET_KEY'] = os.getenv('SECRET_KEY', default='flask_secret_key')
+api = Api(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -32,9 +36,14 @@ def load_user(user_id):
 
 def main():
     db_session.global_init("db/mars_explorer.db")
+
     app.register_blueprint(errors_handler.blueprint)
     app.register_blueprint(jobs_api.blueprint)
     app.register_blueprint(users_api.blueprint)
+
+    api.add_resource(users_resources.UsersListResource, '/api/v2/users')
+    api.add_resource(users_resources.UsersResource, '/api/v2/users/<int:user_id>')
+
     app.run(port=5000)
 
 
