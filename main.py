@@ -1,3 +1,4 @@
+import flask
 from flask import Flask, abort, redirect, render_template, request
 from flask_login import LoginManager, current_user, login_user, login_required, logout_user
 import data.db_session as db_session
@@ -11,8 +12,9 @@ from data.jobs import Jobs
 from forms.user import LoginForm, RegisterForm
 from forms.jobs import AddJobForm, EditJobForm
 
-import os
 import dotenv
+import os
+import requests
 
 dotenv.load_dotenv()
 
@@ -33,7 +35,7 @@ def main():
     app.register_blueprint(errors_handler.blueprint)
     app.register_blueprint(jobs_api.blueprint)
     app.register_blueprint(users_api.blueprint)
-    app.run(port=8080)
+    app.run(port=5000)
 
 
 @app.route('/')
@@ -155,6 +157,54 @@ def deletejob(job_id, user_id):
     else:
         abort(404)
     return redirect('/')
+
+
+@app.route('/users_show/<int:user_id>', methods=['GET'])
+def users_show(user_id):
+    # Объект пользователя
+    user = requests.get(f'http://localhost:5000/api/users/{user_id}').json()
+    if 'error' in user.keys():
+        return flask.make_response(flask.jsonify({'error': 'Not found'}), 404)
+    user = user['user']
+
+    search_api_server = "https://search-maps.yandex.ru/v1/"
+    api_key = 'dda3ddba-c9ea-4ead-9010-f43fbc15c6e3'
+
+    search_params = {
+        "apikey": api_key,
+        "text": user['city_from'],
+        "lang": "ru_RU"
+    }
+
+    response = requests.get(search_api_server, params=search_params)
+    if not response:
+        return 'Город не найден :('
+
+    # Преобразуем ответ в json-объект
+    json_response = response.json()
+
+    # Получаем первый найденный город.
+    city = json_response["features"][0]
+
+    # Получаем координаты ответа.
+    point = city["geometry"]["coordinates"]
+    org_point = "{0},{1}".format(point[0], point[1])
+    delta = "0.05"
+
+    # Собираем параметры для запроса к StaticMapsAPI:
+    map_params = {
+        # позиционируем карту центром на наш исходный адрес
+        "spn": ",".join([delta, delta]),
+        "l": "map",
+        # добавим точку, чтобы указать найденный город
+        "pt": "{0},pm2dgl".format(org_point)
+    }
+
+    map_api_server = "http://static-maps.yandex.ru/1.x/"
+    # ... и выполняем запрос
+    response = requests.get(map_api_server, params=map_params)
+    return flask.render_template('users_show.html', name=user['name'], surname=user['surname'], city=user['city_from'],
+                                 img=response.url)
 
 
 if __name__ == '__main__':
