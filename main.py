@@ -9,6 +9,7 @@ import data.users_api as users_api
 import data.errors_handler as errors_handler
 
 import data.users_resources as users_resources
+import data.jobs_resources as jobs_resources
 
 from data.users import User
 from data.jobs import Jobs
@@ -43,6 +44,9 @@ def main():
 
     api.add_resource(users_resources.UsersListResource, '/api/v2/users')
     api.add_resource(users_resources.UsersResource, '/api/v2/users/<int:user_id>')
+
+    api.add_resource(jobs_resources.JobsListResource, '/api/v2/jobs')
+    api.add_resource(jobs_resources.JobsResource, '/api/v2/jobs/<int:jobs_id>')
 
     app.run(port=5000)
 
@@ -89,19 +93,18 @@ def reqister():
             return render_template('register.html', title='Регистрация',
                                    form=form,
                                    message="Такой пользователь уже есть")
-        user = User(
-            surname=form.surname.data.capitalize(),
-            name=form.name.data.capitalize(),
-            age=form.age.data,
-            city_from=form.city_from.data,
-            position=form.position.data,
-            speciality=form.speciality.data,
-            address=form.address.data,
-            email=form.email.data,
-        )
-        user.set_password(form.password.data)
-        session.add(user)
-        session.commit()
+        user_params = {
+            'surname': form.surname.data.capitalize(),
+            'name': form.name.data.capitalize(),
+            'age': form.age.data,
+            'city_from': form.city_from.data,
+            'position': form.position.data,
+            'speciality': form.speciality.data,
+            'address': form.address.data,
+            'email': form.email.data,
+            'password': form.password.data
+        }
+        requests.post('http://localhost:5000/api/v2/users', json=user_params)
         return redirect('/login')
     return render_template('register.html', title='Регистрация', form=form)
 
