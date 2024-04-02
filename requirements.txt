@@ -1,4 +1,8 @@
+python-dotenv==1.0.1
 flask==3.0.2
 flask-login==0.6.3
+flask-restful==0.3.10
 flask-wtf==1.2.1
+requests==2.31.0
 sqlalchemy==2.0.28
+sqlalchemy_serializer==1.14.12
