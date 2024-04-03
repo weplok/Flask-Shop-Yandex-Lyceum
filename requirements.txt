@@ -5,4 +5,4 @@ flask-restful==0.3.10
 flask-wtf==1.2.1
 requests==2.31.0
 sqlalchemy==2.0.28
-sqlalchemy_serializer==1.14.12
+sqlalchemy_serializer==1.4.12
