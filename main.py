@@ -53,8 +53,7 @@ def main():
 
 @app.route('/')
 def jobs():
-    session = db_session.create_session()
-    jobs_list = session.query(Jobs).all()
+    jobs_list = requests.get(f'http://localhost:5000/api/v2/jobs').json()['jobs']
     return render_template('jobs.html', jobs=jobs_list)
 
 
@@ -114,16 +113,13 @@ def reqister():
 def addjob():
     form = AddJobForm()
     if form.validate_on_submit():
-        session = db_session.create_session()
-        job = Jobs(
-            team_leader=form.team_leader.data,
-            job=form.job.data,
-            work_size=form.work_size.data,
-            collaborators=form.collaborators.data,
-            is_finished=form.is_finished.data,
-        )
-        session.add(job)
-        session.commit()
+        requests.post('http://localhost:5000/api/v2/jobs',
+                      json={'team_leader': form.team_leader.data,
+                            'job': form.job.data,
+                            'work_size': form.work_size.data,
+                            'collaborators': form.collaborators.data,
+                            'is_finished': form.is_finished.data}
+                      )
         return redirect('/')
     return render_template('addjob.html', title='Работа', form=form)
 
@@ -144,17 +140,13 @@ def editjob(job_id, user_id):
         else:
             abort(404)
     if form.validate_on_submit():
-        session = db_session.create_session()
-        job = session.query(Jobs).filter(Jobs.id == job_id).first()
-        if job:
-            job.job = form.job.data
-            job.work_size = form.work_size.data
-            job.collaborators = form.collaborators.data
-            job.is_finished = form.is_finished.data
-            session.commit()
-            return redirect('/')
-        else:
-            abort(404)
+        requests.put(f'http://localhost:5000/api/jobs/{job_id}',
+                     json={
+                         'job': form.job.data,
+                         'work_size': form.work_size.data,
+                         'collaborators': form.collaborators.data,
+                         'is_finished': form.is_finished.data})
+        return redirect('/')
     return render_template('editjob.html', form=form)
 
 
